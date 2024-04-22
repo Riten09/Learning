@@ -43,7 +43,7 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<UserDto>> Login(loginDto login)
     {
         
-        var user = await _dataContext.Users.SingleOrDefaultAsync(x => x.UserName == login.username);
+        var user = await _dataContext.Users.SingleOrDefaultAsync(x => x.UserName == login.username.ToLower());
 
         if (user == null) return Unauthorized("invalid user name.");
 
