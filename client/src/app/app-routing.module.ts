@@ -6,6 +6,9 @@ import { MemberListComponent } from './members/member-list/member-list.component
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
 import { authGuard } from './_guards/auth.guard';
+import { TestErrorComponent } from './errors/test-error/test-error.component';
+import { NotFoundComponent } from './errors/not-found/not-found.component';
+import { ServerErrorComponent } from './errors/server-error/server-error.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent}, //path for home page, if url is blank 
@@ -19,8 +22,10 @@ const routes: Routes = [
       {path: 'messages', component: MessagesComponent},
     ]
   },
-  
-  {path: '**', component: HomeComponent}, // ** means if url mentioned will not match with above path then it will go to home component 
+  {path: "errors", component: TestErrorComponent},
+  {path: "not-found", component: NotFoundComponent},
+  {path: "server-error", component: ServerErrorComponent},
+  {path: '**', component: NotFoundComponent}, // ** means if url mentioned will not match with above path then it will go to home component 
 ];
 
 @NgModule({
