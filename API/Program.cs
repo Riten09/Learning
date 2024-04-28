@@ -1,5 +1,7 @@
+using API.Data;
 using API.ExceptionMIddleware;
 using API.Extension;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,20 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+//adding logic for DB migration 
+using var scope = app.Services.CreateScope(); // creating scope to get the access to all the services in programe class
+var services = scope.ServiceProvider; // creating services 
+try
+{
+    var context = services.GetRequiredService<DataContext>(); // created db context 
+    await context.Database.MigrateAsync(); // migrating the DB 
+    await Seed.SeedUsers(context); 
+}
+catch (Exception ex)
+{
+    
+    var logger = services.GetService<ILogger<Program>>();
+    logger.LogError(ex, "AN error occurred during migration");
+}
 
 app.Run();
