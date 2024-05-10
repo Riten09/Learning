@@ -14,7 +14,7 @@ import { MembersService } from 'src/app/_services/members.service';
 })
 export class MemberEditComponent implements OnInit {
   @ViewChild('editForm') editForm: NgForm | undefined;
-  @HostListener('window:beforeunload', ['$event']) inloadNotification($event: any) {
+  @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm?.dirty) {
       $event.returnValue = true;
     }
@@ -45,7 +45,6 @@ export class MemberEditComponent implements OnInit {
         this.toastr.success("Profile updated successfully!");
       }
     })
-
 
   }
 
