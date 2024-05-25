@@ -4,6 +4,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +15,12 @@ public class AccountController : BaseApiController
 
     private readonly DataContext _dataContext;
     private readonly ITokenService _tokenService;
-    public AccountController(DataContext context, ITokenService tokenService)  // injecting token service & DBContext 
+    private readonly IMapper _mapper;
+
+    public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)  // injecting token service & DBContext 
     {
         _tokenService = tokenService;
+        _mapper = mapper;
         _dataContext = context;
     }
 
@@ -24,8 +28,10 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<UserDto>> Register(RegisterDto register)
     {
         if (await UserExists(register.UserName)) return BadRequest("User is already exists.");
+
+    var user = _mapper.Map<AppUser>(register);
+
         using var hmac= new HMACSHA512();
-        AppUser user = new AppUser(); 
         user.UserName = register.UserName.ToLower();
         user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(register.Password));
         user.PasswordSalt = hmac.Key;
@@ -34,7 +40,9 @@ public class AccountController : BaseApiController
 
         return new UserDto{
             Username = user.UserName,
-            Token = _tokenService.CreateToken(user)
+            Token = _tokenService.CreateToken(user),
+            KnownAs = user.KnownAs,
+            Gender = user.Gender
         };    
 
     }
@@ -61,7 +69,9 @@ public class AccountController : BaseApiController
         return new UserDto{
             Username = user.UserName,
             Token = _tokenService.CreateToken(user),
-            PhotoUrl = user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
+            PhotoUrl = user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
+            KnownAs = user.KnownAs,
+            Gender = user.Gender
         };
     }
 
