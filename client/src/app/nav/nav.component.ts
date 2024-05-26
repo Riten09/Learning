@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
-import { subscribeOn } from 'rxjs';
+import { subscribeOn, take } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { MembersService } from '../_services/members.service';
+import { UserParams } from '../_models/userParams';
+import { User } from '../_models/user';
 
 @Component({
   selector: 'app-nav',
@@ -11,14 +14,28 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class NavComponent implements OnInit {
   model: any = {};
+  userParams: UserParams | undefined;
+  user: User | undefined;
 
-  constructor(public accountService: AccountService,private router: Router, private toastr: ToastrService){ }
+  constructor(public accountService: AccountService,private router: Router, private toastr: ToastrService,private memberSerive: MembersService){ }
   ngOnInit(): void {
   }
 
   login(){
     this.accountService.login(this.model).subscribe({
-      next: () => this.router.navigateByUrl('/members')
+      next: () => {
+      
+      this.accountService.currenUser$.pipe(take(1)).subscribe({
+        next: user =>{
+          if(user){
+            this.memberSerive.setUserParams(new UserParams(user))
+            this.router.navigateByUrl('/members')
+          }
+        }
+      })
+      
+      }
+      
       
     })
   }

@@ -5,7 +5,7 @@ namespace API.Extension;
 
 public static class HttpExtensions
 {
-    public static void AddPagonationHeader(this HttpResponse response, PaginationHeader header)
+    public static void AddPaginationHeader(this HttpResponse response, PaginationHeader header)
     {
         var jsonOption = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         response.Headers.Append("Pagination", JsonSerializer.Serialize(header, jsonOption));

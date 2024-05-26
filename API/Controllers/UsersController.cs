@@ -33,7 +33,7 @@ namespace API.Controllers
                 userParams.Gender = currentUser.Gender == "male" ? "female" : "male";
             }
             var users = await _userRepository.GetMembersAsync(userParams);
-            Response.AddPagonationHeader(new PaginationHeader(users.CurrentPapge, users.PageSize,users.TotalCount, users.TotalPages));
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPapge, users.PageSize,users.TotalCount, users.TotalPages));
             return Ok(users);
         }
 
